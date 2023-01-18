@@ -17,8 +17,16 @@ jobs:
           npm run all
   test: # make sure the action works on a clean machine without building
     runs-on: ubuntu-latest
+    permissions:
+      packages: read
     steps:
       - uses: actions/checkout@v2
       - uses: ./
+        id: get_package_version_id
         with:
-          milliseconds: 1000
+          packageOwner: SpotlerSoftware
+          packageName: spotler-library
+          packageVersionName: 0.0.0-github-master-SNAPSHOT
+          githubToken: $GITHUB_TOKEN
+      - name: 'Echo output'
+        run: echo ${{ steps.get_package_version_id.outputs.packageVersionId}}

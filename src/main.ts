@@ -1,16 +1,39 @@
 import * as core from '@actions/core'
-import {wait} from './wait'
+import {Octokit} from '@octokit/core'
+import {paginateRest} from '@octokit/plugin-paginate-rest'
+import {restEndpointMethods} from '@octokit/plugin-rest-endpoint-methods'
 
 async function run(): Promise<void> {
   try {
-    const ms: string = core.getInput('milliseconds')
-    core.debug(`Waiting ${ms} milliseconds ...`) // debug is only output if you set the secret `ACTIONS_STEP_DEBUG` to true
+    const packageOwner: string = core.getInput('packageOwner')
+    const packageName: string = core.getInput('packageName') as any
+    const packageVersionName: string = core.getInput('packageVersionName')
 
-    core.debug(new Date().toTimeString())
-    await wait(parseInt(ms, 10))
-    core.debug(new Date().toTimeString())
+    const MyOctokit = Octokit.plugin(paginateRest, restEndpointMethods)
+    const octokit = new MyOctokit({auth: core.getInput('githubToken')})
 
-    core.setOutput('time', new Date().toTimeString())
+    const versions = await octokit.paginate(
+      octokit.rest.packages.getAllPackageVersionsForPackageOwnedByOrg,
+      {
+        org: packageOwner,
+        package_type: 'npm',
+        package_name: packageName
+      },
+      (response, done) => {
+        const foundVersion = response.data.find(
+          v => v.name === packageVersionName
+        )
+        if (foundVersion) {
+          done()
+        }
+        return [foundVersion]
+      }
+    )
+    if (versions && versions[0]) {
+      core.setOutput('packageVersionId', versions[0].id)
+    } else {
+      core.setFailed('Version not found')
+    }
   } catch (error) {
     if (error instanceof Error) core.setFailed(error.message)
   }
