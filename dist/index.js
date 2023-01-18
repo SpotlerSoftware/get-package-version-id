@@ -42,14 +42,15 @@ const plugin_rest_endpoint_methods_1 = __nccwpck_require__(3044);
 function run() {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            const packageOwner = core.getInput('packageOwner');
-            const packageName = core.getInput('packageName');
-            const packageVersionName = core.getInput('packageVersionName');
             const MyOctokit = core_1.Octokit.plugin(plugin_paginate_rest_1.paginateRest, plugin_rest_endpoint_methods_1.restEndpointMethods);
             const octokit = new MyOctokit({ auth: core.getInput('githubToken') });
+            const packageOwner = core.getInput('packageOwner');
+            const packageName = core.getInput('packageName');
+            const packageType = core.getInput('packageType');
+            const packageVersionName = core.getInput('packageVersionName');
             const versions = yield octokit.paginate(octokit.rest.packages.getAllPackageVersionsForPackageOwnedByOrg, {
                 org: packageOwner,
-                package_type: 'npm',
+                package_type: packageType,
                 package_name: packageName
             }, (response, done) => {
                 const foundVersion = response.data.find(v => v.name === packageVersionName);

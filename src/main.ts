@@ -5,18 +5,19 @@ import {restEndpointMethods} from '@octokit/plugin-rest-endpoint-methods'
 
 async function run(): Promise<void> {
   try {
-    const packageOwner: string = core.getInput('packageOwner')
-    const packageName: string = core.getInput('packageName')
-    const packageVersionName: string = core.getInput('packageVersionName')
-
     const MyOctokit = Octokit.plugin(paginateRest, restEndpointMethods)
     const octokit = new MyOctokit({auth: core.getInput('githubToken')})
+    const packageOwner: string = core.getInput('packageOwner')
+    const packageName: string = core.getInput('packageName')
+    const packageType: typeof octokit.rest.packages.getAllPackageVersionsForPackageOwnedByOrg.prototype.package_type =
+      core.getInput('packageType')
+    const packageVersionName: string = core.getInput('packageVersionName')
 
     const versions = await octokit.paginate(
       octokit.rest.packages.getAllPackageVersionsForPackageOwnedByOrg,
       {
         org: packageOwner,
-        package_type: 'npm',
+        package_type: packageType,
         package_name: packageName
       },
       (response, done) => {

@@ -8,6 +8,10 @@ inputs:
   packageName: # change this
     required: true
     description: 'Name of the package'
+  packageType: # change this
+    required: true
+    description: 'Type of the package (npm)'
+    default: 'npm'
   packageVersionName: # change this
     required: true
     description: 'Name version of the package'
