@@ -27,6 +27,6 @@ jobs:
           packageOwner: SpotlerSoftware
           packageName: spotler-library
           packageVersionName: 0.0.0-github-master-SNAPSHOT
-          githubToken: $GITHUB_TOKEN
+          githubToken: ${{ secrets.SPOTLER_REPO_ACCESS_TOKEN }}
       - name: 'Echo output'
         run: echo ${{ steps.get_package_version_id.outputs.packageVersionId}}

@@ -6,7 +6,7 @@ import {restEndpointMethods} from '@octokit/plugin-rest-endpoint-methods'
 async function run(): Promise<void> {
   try {
     const packageOwner: string = core.getInput('packageOwner')
-    const packageName: string = core.getInput('packageName') as any
+    const packageName: string = core.getInput('packageName')
     const packageVersionName: string = core.getInput('packageVersionName')
 
     const MyOctokit = Octokit.plugin(paginateRest, restEndpointMethods)
