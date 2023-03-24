@@ -13,7 +13,20 @@ async function run(): Promise<void> {
       core.getInput('packageType')
     const packageVersionName: string = core.getInput('packageVersionName')
 
-    const versions = await octokit.paginate(
+    core.debug(`packageOwner: ${packageOwner}`)
+    core.debug(`packageName: ${packageName}`)
+    core.debug(`packageType: ${packageType}`)
+    core.debug(`packageVersionName: ${packageVersionName}`)
+
+    const packages =
+      await octokit.rest.packages.getAllPackageVersionsForPackageOwnedByOrg({
+        org: packageOwner,
+        package_type: packageType,
+        package_name: packageName
+      })
+    core.setOutput('packages found:', packages)
+
+/*    const versions = await octokit.paginate(
       octokit.rest.packages.getAllPackageVersionsForPackageOwnedByOrg,
       {
         org: packageOwner,
@@ -34,7 +47,7 @@ async function run(): Promise<void> {
       core.setOutput('packageVersionId', versions[0].id)
     } else {
       core.setFailed('Version not found')
-    }
+    }*/
   } catch (error) {
     if (error instanceof Error) core.setFailed(error.message)
   }
