@@ -56,8 +56,9 @@ function run() {
                 const foundVersion = response.data.find(v => v.name === packageVersionName);
                 if (foundVersion) {
                     done();
+                    return [foundVersion];
                 }
-                return [foundVersion];
+                return [];
             });
             if (versions && versions[0]) {
                 core.setOutput('packageVersionId', versions[0].id);
