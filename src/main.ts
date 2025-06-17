@@ -26,8 +26,9 @@ async function run(): Promise<void> {
         )
         if (foundVersion) {
           done()
+          return [foundVersion]
         }
-        return [foundVersion]
+        return []
       }
     )
     if (versions && versions[0]) {
